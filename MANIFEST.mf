@@ -1,0 +1,6 @@
+Manifest-Version: 1.0    
+Archiver-Version: 1.0  
+Created-By: ifma  
+Built-By: ifma  
+Build-Jdk: 1.8.0_151 
+Class-Path: 'lib/*'  

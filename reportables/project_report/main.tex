@@ -1,0 +1,171 @@
+%-----------------------------------------------------------------------------
+% Template for seminar 'Program Analysis' at TU Darmstadt.
+%
+% Adapted from template for sigplanconf LaTeX Class, which is a LaTeX 2e
+% class file for SIGPLAN conference proceedings (by Paul C.
+% Anagnostopoulos).
+%
+%-----------------------------------------------------------------------------
+
+
+\documentclass[authoryear,preprint]{sigplanconf}
+
+% A couple of packages that may be useful
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{algorithm2e}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{tikz}
+\usepackage{booktabs}
+\usepackage{subfigure}
+\usepackage[english]{babel}
+\usepackage{blindtext}
+\usepackage[normalem]{ulem}
+
+\begin{document}
+
+\special{papersize=a4}
+\setlength{\pdfpageheight}{\paperheight}
+\setlength{\pdfpagewidth}{\paperwidth}
+
+
+\title{System Dependence Graphs for Java Programs}
+
+\authorinfo{Pavlos Milaszewicz, \sout{Ito Franchilo Mikael Alcuaz}}{}{}
+
+\maketitle
+
+\begin{abstract}
+\blindtext % replace this with your own text
+\end{abstract}
+
+
+\section{Introduction}
+\label{sec:introduction}
+
+This is the introduction.
+
+
+\section{Some Section}
+\label{sec:some_section}
+
+After this great introduction (Section~\ref{sec:introduction}), the 
+following provides some additional hints and examples for the
+layout and style of this paper. 
+
+
+\subsection{Citations}
+
+Use citations to refer to other 
+papers~\cite{HerlihyMoss1993-TransactionalMemory,FraserHanson1992-CodeGenerator} 
+and books~\cite{Strunk-ElementsOfStyle,Aho86-Compilers}.
+
+
+\subsection{Tables}
+
+Table~\ref{t:Translations} shows how a table looks like.
+
+\begin{table}[ht]
+\centering
+\begin{tabular}{ll}
+\hline
+\textbf{English} & \textbf{German}\\
+\hline
+cell phone       & Handy\\
+Diet Coke        & Coca Cola light\\
+\hline
+\end{tabular}
+\caption[Translations]{\label{t:Translations}Translations.}
+\end{table}
+
+\subsection{Figures}
+
+Figure~\ref{f:SOLAlogo} shows a simple figure with a single picture
+and Figure~\ref{f:SubfigureExample} shows a more complex figure
+containing subfigures.
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=.6\linewidth]{figures/SOLALogo}
+\caption[SOLA logo]{\label{f:SOLAlogo}SOLA logo.}
+\end{figure}
+
+\begin{figure}[ht]
+\centering
+\subfigure[TUDaLogo]{\includegraphics[height=12mm]{figures/TUDaLogo}}\quad
+\subfigure[SOLALogo]{\includegraphics[height=12mm]{figures/SOLALogo}}
+\caption[Subfigure example]{\label{f:SubfigureExample}Two pictures as
+  part of a single figure through the magic of the subfigure package.}
+\end{figure}
+
+
+\subsection{Source code}
+
+The listings package provides tools to typeset source code
+listings. It supports many programming languages and provides a lot of
+formatting options.
+
+\lstset{numbers=left, numberstyle=\tiny, stepnumber=1, numbersep=5pt}
+\lstset{basicstyle=\ttfamily}
+\lstset{frame=tb}
+
+\begin{lstlisting}[float,caption=Example usage of the listing package,label=l:javaClass,language=Java]
+class S {
+   int f1 = 42;
+   public S(int x) {
+          f1 = x;
+   }
+}
+\end{lstlisting}
+
+Listing \ref{l:javaClass} shows an example listing. Code snippets can
+also be inserted in normal text:
+\verb$\lstinline|int f1 = 42;|$ gives \lstinline$int f1 = 42;$
+
+
+\subsection{Miscellany}
+
+\begin{description}
+
+\item[Capitalization.] When referring to a named table (such as in the
+  previous section), the word \emph{table} is capitalized. The same is
+  true for figures, chapters and sections.
+
+\item[Bibliography.] Use \verb|bibtex| to make your life easier and to
+  produce consistently formatted entries.
+
+\item[Contractions.] Avoid contractions. For instance, use ``do not''
+  rather than ``don't.''
+
+\item[Style guide.] A classic reference book on writing style is
+  Strunk's \emph{The Elements of Style} \cite{Strunk-ElementsOfStyle}.
+
+\end{description}
+
+
+\section{Another Section}
+
+\blindtext % replace this with your own text
+
+
+\section{Yet Another Section}
+
+\blindtext % replace this with your own text
+
+
+\section{Conclusion}
+
+\blindtext % replace this with your own text
+
+\bibliographystyle{abbrvnat}
+\bibliography{references}
+
+
+\bibliographystyle{abbrvnat}
+
+
+
+\end{document}

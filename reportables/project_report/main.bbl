@@ -1,0 +1,33 @@
+\begin{thebibliography}{4}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{\texttt{#1}}
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{doi: #1}\else
+  \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
+
+\bibitem[Aho et~al.(1986)Aho, Sethi, and Ullman]{Aho86-Compilers}
+A.~V. Aho, R.~Sethi, and J.~D. Ullman.
+\newblock \emph{Compilers: principles, techniques, and tools}.
+\newblock Addison-Wesley Longman Publishing Co., Inc., 1986.
+\newblock ISBN 0-201-10088-6.
+
+\bibitem[Fraser et~al.(1992)Fraser, Hanson, and
+  Proebsting]{FraserHanson1992-CodeGenerator}
+C.~Fraser, D.~Hanson, and T.~Proebsting.
+\newblock Engineering a simple, efficient code generator generator.
+\newblock \emph{ACM Letters on Programming Languages and Systems}, 1\penalty0
+  (3):\penalty0 213--226, Sept. 1992.
+
+\bibitem[Herlihy and Moss(1993)]{HerlihyMoss1993-TransactionalMemory}
+M.~Herlihy and J.~E.~B. Moss.
+\newblock Transactional memory: Architectural support for lock-free data
+  structures.
+\newblock In \emph{Proc. of the 20th Intl. Symp. on Computer Architecture
+  (ISCA'93)}, pages 289--300, 1993.
+
+\bibitem[Jr. and White(2000)]{Strunk-ElementsOfStyle}
+W.~S. Jr. and E.~B. White.
+\newblock \emph{The Elements of Style}.
+\newblock 2000.
+
+\end{thebibliography}
