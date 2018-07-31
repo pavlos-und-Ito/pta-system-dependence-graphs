@@ -31,51 +31,11 @@ import soot.toolkits.scalar.ForwardFlowAnalysis;
  * @date 17 Feb 2018
  * @see
  */
-public class SDGForwardAnalysis {
-    protected Map<Unit, List> unitToGuaranteedDefs;
-
-    public SDGForwardAnalysis(UnitGraph graph) {
-        if (Options.v().verbose()) {
-            G.v().out.println("[" + graph.getBody().getMethod().getName()
-                    + "]     Constructing SDG...");
-        }
-
-        final GuaranteedDefsAnalysis analysis = new GuaranteedDefsAnalysis(
-                graph);
-
-        // build map
-        {
-            this.unitToGuaranteedDefs = new HashMap<Unit, List>(
-                    graph.size() * 2 + 1, 0.7f);
-            final Iterator unitIt = graph.iterator();
-
-            while (unitIt.hasNext()) {
-                final Unit s = (Unit) unitIt.next();
-                final FlowSet set = (FlowSet) analysis.getFlowBefore(s);
-                this.unitToGuaranteedDefs.put(s,
-                        Collections.unmodifiableList(set.toList()));
-            }
-        }
-    }
-
-    /**
-     * Returns a list of locals guaranteed to be defined at (just before)
-     * program point <tt>s</tt>.
-     **/
-    public List getGuaranteedDefs(Unit s) {
-        return this.unitToGuaranteedDefs.get(s);
-    }
-}
-
-/**
- * Flow analysis to determine all locals guaranteed to be defined at a given
- * program point.
- **/
-class GuaranteedDefsAnalysis extends ForwardFlowAnalysis {
+class SDGForwardAnalysis extends ForwardFlowAnalysis {
     FlowSet emptySet = new ArraySparseSet();
     Map<Unit, FlowSet> unitToGenerateSet;
 
-    GuaranteedDefsAnalysis(UnitGraph graph) {
+    SDGForwardAnalysis(UnitGraph graph) {
         super(graph);
         final DominatorsFinder df = new MHGDominatorsFinder(graph);
         this.unitToGenerateSet = new HashMap<Unit, FlowSet>(
@@ -103,48 +63,71 @@ class GuaranteedDefsAnalysis extends ForwardFlowAnalysis {
         doAnalysis();
     }
 
-    @Override
-    protected void copy(Object source, Object dest) {
-        final FlowSet sourceSet = (FlowSet) source, destSet = (FlowSet) dest;
-
-        sourceSet.copy(destSet);
+    /**
+     * All INs are initialized to the empty set.
+     **/
+    protected Object newInitialFlow()
+    {
+    	
+    	// New sdg out branch
+    	if (!unitToGenerateSet.isEmpty()) {
+    		emptySet.clear();
+    		Map<Unit, FlowSet> newFunctionSet = new HashMap<Unit, FlowSet>(graph.size() * 2 + 1, 0.7f);
+    		return newFunctionSet;
+    	}
+        return emptySet.clone();
     }
 
     /**
      * IN(Start) is the empty set
      **/
-    @Override
-    protected Object entryInitialFlow() {
-        return this.emptySet.clone();
+    protected Object entryInitialFlow()
+    {
+        return emptySet.clone();
     }
 
     /**
      * OUT is the same as IN plus the genSet.
      **/
-    @Override
-    protected void flowThrough(Object inValue, Object unit, Object outValue) {
-        final FlowSet in = (FlowSet) inValue, out = (FlowSet) outValue;
+    protected void flowThrough(Object inValue, Object unit, Object outValue)
+    {
+        FlowSet
+            in = (FlowSet) inValue,
+            out = (FlowSet) outValue;
 
         // perform generation (kill set is empty)
-        in.union(this.unitToGenerateSet.get(unit), out);
+        in.union(unitToGenerateSet.get(unit), out);
+        
+        // sdg branch
+        in.clone();
+        in.intersection(in, out);
     }
 
     /**
      * All paths == Intersection.
      **/
-    @Override
-    protected void merge(Object in1, Object in2, Object out) {
-        final FlowSet inSet1 = (FlowSet) in1, inSet2 = (FlowSet) in2,
-                outSet = (FlowSet) out;
+    protected void merge(Object in1, Object in2, Object out)
+    {
+        FlowSet
+            inSet1 = (FlowSet) in1,
+            inSet2 = (FlowSet) in2,
+            outSet = (FlowSet) out;
 
         inSet1.intersection(inSet2, outSet);
+        
+        // sdg branch
+        inSet2.intersection(inSet1, outSet);
     }
 
-    /**
-     * All INs are initialized to the empty set.
-     **/
-    @Override
-    protected Object newInitialFlow() {
-        return this.emptySet.clone();
+    protected void copy(Object source, Object dest)
+    {
+        FlowSet
+            sourceSet = (FlowSet) source,
+            destSet = (FlowSet) dest;
+
+        sourceSet.copy(destSet);
+        
+        // Sdg branch
+        ((ArraySparseSet) unitToGenerateSet).copy(destSet);
     }
 }

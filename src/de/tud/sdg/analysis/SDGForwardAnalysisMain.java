@@ -27,8 +27,8 @@ public class SDGForwardAnalysisMain {
                     @Override
                     protected void internalTransform(Body body, String phase,
                             Map options) {
-                        // new LocalMustNotAliasAnalysis(
-                        // new ExceptionalUnitGraph(body));
+                        new SDGForwardAnalysis(
+                        new ExceptionalUnitGraph(body));
                     }
                 }));
         soot.Main.main(args);

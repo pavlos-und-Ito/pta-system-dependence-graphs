@@ -1,0 +1,26 @@
+public class TestHelloWorld extends java.lang.Object
+{
+
+    public void helloWorld()
+    {
+        TestHelloWorld this;
+        java.lang.String s;
+        int i;
+        double d;
+
+        this := @this: TestHelloWorld;
+        s = "Hello Pavlos";
+        i = 0;
+        d = 1.11;
+        return;
+    }
+
+    public void <init>()
+    {
+        TestHelloWorld this;
+
+        this := @this: TestHelloWorld;
+        specialinvoke this.<java.lang.Object: void <init>()>();
+        return;
+    }
+}
