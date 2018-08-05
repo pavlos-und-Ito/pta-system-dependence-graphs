@@ -28,7 +28,7 @@ public class SDGForwardAnalysisMain {
                     protected void internalTransform(Body body, String phase,
                             Map options) {
                         new SDGForwardAnalysis(
-                        new ExceptionalUnitGraph(body));
+                        new SDGGraph(body));
                     }
                 }));
         soot.Main.main(args);
