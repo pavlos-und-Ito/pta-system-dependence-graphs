@@ -1,4 +1,8 @@
+import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import soot.Body;
 import soot.G;
@@ -7,6 +11,7 @@ import soot.MethodOrMethodContext;
 import soot.PatchingChain;
 import soot.Unit;
 import soot.ValueBox;
+import soot.toolkits.exceptions.ThrowAnalysis;
 import soot.toolkits.graph.ExceptionalUnitGraph;
 
 /**
@@ -22,16 +27,40 @@ public class SDGGraph extends ExceptionalUnitGraph {
         for(Iterator unitIt = unitsChain.iterator(); unitIt.hasNext();){
             Unit unit = (Unit) unitIt.next();
             
-            unit.removeAllTags();
-            
             for(Iterator boxIt = unit.getUseAndDefBoxes().iterator(); boxIt.hasNext();){
                 ValueBox box = (ValueBox) boxIt.next();
                 
+                // Method call as head and method dest as tail.
                 if(box.getValue() instanceof MethodOrMethodContext) {
-					G.v().out.println(box.toString());
-                    System.out.println(box.toString());
+					super.addEdge(super.unitToSuccs, super.unitToPreds, unit, (Unit) unitIt.next());
                 }
             }
         }
+	}
+
+	@Override
+	protected void initialize(ThrowAnalysis throwAnalysis,
+			boolean omitExceptingUnitEdges) {
+		super.initialize(throwAnalysis, omitExceptingUnitEdges);
+	}
+
+	@Override
+	protected Map<Unit, Collection<ExceptionDest>> buildExceptionDests(
+			ThrowAnalysis throwAnalysis) {
+		return super.buildExceptionDests(throwAnalysis);
+	}
+
+	@Override
+	protected Set<Unit> buildExceptionalEdges(ThrowAnalysis throwAnalysis,
+			Map<Unit, Collection<ExceptionDest>> unitToExceptionDests,
+			Map<Unit, List<Unit>> unitToSuccs,
+			Map<Unit, List<Unit>> unitToPreds, boolean omitExceptingUnitEdges) {
+		return super.buildExceptionalEdges(throwAnalysis, unitToExceptionDests,
+				unitToSuccs, unitToPreds, omitExceptingUnitEdges);
+	}
+
+	@Override
+	protected void buildHeadsAndTails() throws IllegalStateException {
+		super.buildHeadsAndTails();
 	}
 }

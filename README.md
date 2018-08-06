@@ -1,8 +1,7 @@
 # README.md
 
-## Prerequisites
+## Instructions to generate an SDG of a sample Java class.
 
-- Maven `sudo apt-get install maven`; this will simplify dependency management (the SCCF uses Maven heavily, so it is worthwhile to learn). The `pom.xml` file is set up to automatically use the Soot dependencies in the Maven repository; they may also be pulled locally via `mvn install` in the directory where the `pom.xml` exists, this will copy the jar files into your ~/.m2 directory.
-
-## Generate the sample Hello World forward branched PDG.
+- Install JDK/JRE 1.7, Eclipse Kepler, and the Soot Eclipse Plugin. The plugin itself is not maintained by the library authors so an older version is required.
+- Right click on the test Java file -> Run Soot... -> Interactive Mode -> Set Main as the main class, and the java project as the project name -> ok
 

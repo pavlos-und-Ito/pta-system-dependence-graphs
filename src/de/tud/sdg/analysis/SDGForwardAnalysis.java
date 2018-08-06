@@ -1,63 +1,43 @@
-/**
- * SDGForwardAnalysis.java
- *
- * @author ifmalcuaz
- * @date 17 Feb 2018
- */
-package de.tud.sdg;
+import java.util.*;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import soot.G;
-import soot.Local;
-import soot.Unit;
-import soot.ValueBox;
-import soot.options.Options;
-import soot.toolkits.graph.DominatorsFinder;
-import soot.toolkits.graph.MHGDominatorsFinder;
-import soot.toolkits.graph.UnitGraph;
+import soot.*;
+import soot.options.*;
+import soot.toolkits.graph.*;
 import soot.toolkits.scalar.ArraySparseSet;
 import soot.toolkits.scalar.FlowSet;
 import soot.toolkits.scalar.ForwardFlowAnalysis;
 
 /**
- * Type description.
- *
- * @author ifmalcuaz
- * @date 17 Feb 2018
- * @see
- */
-class SDGForwardAnalysis extends ForwardFlowAnalysis {
+ * Flow analysis to generate the flowsets from an SDG.
+ **/
+public class SDGForwardAnalysis extends ForwardFlowAnalysis
+{
     FlowSet emptySet = new ArraySparseSet();
-    Map<Unit, FlowSet> unitToGenerateSet;
+    Map<Unit, FlowSet> functionCallToFlowset;
 
-    SDGForwardAnalysis(UnitGraph graph) {
+    SDGForwardAnalysis(UnitGraph graph)
+    {
         super(graph);
-        final DominatorsFinder df = new MHGDominatorsFinder(graph);
-        this.unitToGenerateSet = new HashMap<Unit, FlowSet>(
-                graph.size() * 2 + 1, 0.7f);
+        DominatorsFinder df = new MHGDominatorsFinder(graph);
+        functionCallToFlowset = new HashMap<Unit, FlowSet>(graph.size() * 2 + 1, 0.7f);
 
-        // pre-compute generate sets
-        for (final Object element : graph) {
-            final Unit s = (Unit) element;
-            final FlowSet genSet = this.emptySet.clone();
-
-            for (final Iterator domsIt = df.getDominators(s).iterator(); domsIt
-                    .hasNext();) {
-                final Unit dom = (Unit) domsIt.next();
-                for (final Object element2 : dom.getDefBoxes()) {
-                    final ValueBox box = (ValueBox) element2;
-                    if (box.getValue() instanceof Local) {
+        for(Iterator unitIt = graph.iterator(); unitIt.hasNext();){
+            Unit s = (Unit) unitIt.next();
+            FlowSet genSet = emptySet.clone();
+            
+            for(Iterator domsIt = df.getDominators(s).iterator(); domsIt.hasNext();){
+                Unit dom = (Unit) domsIt.next();
+                for(Iterator boxIt = dom.getDefBoxes().iterator(); boxIt.hasNext();){
+                    ValueBox box = (ValueBox) boxIt.next();
+                    
+                    // Flowset belonging to a function call.
+                    if(box.getValue() instanceof MethodOrMethodContext) {
                         genSet.add(box.getValue(), genSet);
                     }
                 }
             }
-
-            this.unitToGenerateSet.put(s, genSet);
+            
+            functionCallToFlowset.put(s, genSet);
         }
 
         doAnalysis();
@@ -68,13 +48,6 @@ class SDGForwardAnalysis extends ForwardFlowAnalysis {
      **/
     protected Object newInitialFlow()
     {
-    	
-    	// New sdg out branch
-    	if (!unitToGenerateSet.isEmpty()) {
-    		emptySet.clear();
-    		Map<Unit, FlowSet> newFunctionSet = new HashMap<Unit, FlowSet>(graph.size() * 2 + 1, 0.7f);
-    		return newFunctionSet;
-    	}
         return emptySet.clone();
     }
 
@@ -96,11 +69,7 @@ class SDGForwardAnalysis extends ForwardFlowAnalysis {
             out = (FlowSet) outValue;
 
         // perform generation (kill set is empty)
-        in.union(unitToGenerateSet.get(unit), out);
-        
-        // sdg branch
-        in.clone();
-        in.intersection(in, out);
+        in.union(functionCallToFlowset.get(unit), out);
     }
 
     /**
@@ -114,9 +83,6 @@ class SDGForwardAnalysis extends ForwardFlowAnalysis {
             outSet = (FlowSet) out;
 
         inSet1.intersection(inSet2, outSet);
-        
-        // sdg branch
-        inSet2.intersection(inSet1, outSet);
     }
 
     protected void copy(Object source, Object dest)
@@ -126,8 +92,5 @@ class SDGForwardAnalysis extends ForwardFlowAnalysis {
             destSet = (FlowSet) dest;
 
         sourceSet.copy(destSet);
-        
-        // Sdg branch
-        ((ArraySparseSet) unitToGenerateSet).copy(destSet);
     }
 }
