@@ -39,11 +39,11 @@
 \maketitle
 
 \begin{abstract}
-A System Dependence Graph (SDG) is a representation of inter-procedural data dependencies and control flow information within a program. SDGs can be thought of as an extension of a Program Dependence Graph (PDG), of which only models intra-procedural flow information; SDGs achieve this via extra branching sites across a method invocation. PDGs and SDGs have a number of practical uses, such as optimization, slicing, and debugging. Many program analysis toolkits, such as the Soot framework, provide built-in PDG graph generation capabilities, however, few exist that can automatically generate SDGs.    
+A System Dependence Graph (SDG) models inter-procedural data dependencies and control flow information within a program. SDGs can be thought of as an extension of a Program Dependence Graph (PDG), of which only models intra-procedural flow information; SDGs have extra branching sites to display the extraneous control flow arising from a method call. PDGs and SDGs have a number of practical uses, such as optimization, slicing, and debugging of software programs. Many program analysis toolkits, such as the Soot framework, provide built-in PDG generation features for Java programs, however, few exist that can automatically generate SDGs.    
 
-In this paper we discuss our SDG implementation, of which is performed by extending the Soot framework's PDG generation capabilities. Soot can produce a PDG for any given target Java class; we extend this functionality by implementing a static analysis that detects function calls, and in which case, extra branches and nodes are added to the PDG, of which comprises the SDG. This is achieved by spawning a new PDG for every new function call along the main program flow, and subsequently connecting them via the nodes which represent the call sites.
+In this paper we discuss our SDG implementation using the Soot framework. Soot can produce a PDG for any given target Java class; we extend this functionality by implementing a static analysis that detects function calls, and in which case, extra branches and nodes are added to the PDG, of which comprises the SDG. This is achieved by pre-generating the main PDG control flow, after which the graph is traversed for function calls.
 
-We also discuss the results of the SDG implementation when pitted against sample Java programs. While we found that the analysis works correctly for ordinary function calls, more complex cases, such as anonymous functions and recursive calls, are not properly handled and so the analysis would need to be extended in the future to take into account these limitations.  
+We also discuss the results of the SDG implementation when pitted against sample Java programs. While we found that the analysis works somewhat correctly for ordinary function calls, more complex cases, such as anonymous functions and recursive calls, are not properly handled and so the analysis would need to be extended in the future to take into account these limitations.  
 \end{abstract}
 
 
@@ -90,7 +90,7 @@ This is one of the key points to note with our SDG implementation; in flow set i
 \end{figure}
 
 
-\section{Implementation of SDGs via Soot PDGs}
+\section{Implementation and Results}
 
 We now discuss our approach to implement SDGs using Soot PDGs. As mentioned previously, SDGs are essentially, in their simplest form, just multiple PDGs coalesced together. We take note of the fact that Soot marks function invocations via \textit{virtualinvoke} tags and use this as the entry and exit points for spawning the additional PDGs.
 
@@ -104,7 +104,7 @@ Lastly we also assume a forward non-branched analysis, i.e. the function cannot 
 
 \subsection{Base case: direct function call}
 
-To handle the simplest case of a direct function call, we make use of Soot \textit{virtualinvoke} tags to detect when an occurrence takes place. In such an event, a new PDG is spawned, alongside the original PDG, which represents the control flow information for the invoked function as shown in Figure~\ref{f:firstImpl}.
+To handle the simplest case of a direct function call, we make use of Soot \textit{virtualinvoke} tags to detect when an occurrence takes place. In such an event, a new PDG is spawned, alongside the original PDG, which represents the control flow information for the invoked function as shown in Figure~\ref{f:firstImpl}. Due to time constraints, several bugs persists, the main one being the apparent lack of edges between the entry and exit points of the additional function call.
 
 \begin{figure}[ht]
 	\centering
@@ -115,10 +115,6 @@ To handle the simplest case of a direct function call, we make use of Soot \text
 \subsection{Additional cases: recursion and lambda functions}
 
 Due to time constraints this aspect of the project was not able to be completed.
-
-\section{Evaluation and results}
-
-Note to pavlos: we need to evaluate it against the given test java programs! Then discuss results here!
 
 \section{Conclusion}
 
