@@ -99,7 +99,7 @@ System dependence graphs (SDGs) expand on the information provided by PDGs by al
          \caption[System dependence graph]{\label{fig4}System dependence graph}
 \end{figure}
 
-\section{Implementation}
+\section{Implementation and Results}
 \label{sec:introduction}
 
 Soot is a static analysis framework exclusively for Java programs. Since SDGs are a relatively newer concept in computer science, most frameworks do not provide a built-in SDG generator, including Soot. However, Soot is able to generate PDGs for a given Java class, which can be taken advantage of as SDGs are essentially a connected grouping of several PDGs.
@@ -139,10 +139,9 @@ This is one of the key points to note with our SDG implementation; in flow set i
 	\caption[A PDG with in/out flow information denoted.]{\label{f:sampInOut}A PDG with in/out flow information denoted.}
 \end{figure}
 
+\subsection{Implementation via Soot}
 
-\subsection{Implementation of SDGs via Soot PDGs}
-
-We now discuss our approach to implement SDGs using Soot PDGs. As mentioned previously, SDGs are essentially, in their simplest form, just multiple PDGs coalesced together. We take note of the fact that Soot marks function invocations via \textit{virtualinvoke} tags and use this as the entry and exit points for spawning the additional PDGs.
+We now discuss our approach to implement SDGs using the Soot framework. As mentioned previously, SDGs are essentially, in their simplest form, just multiple PDGs coalesced together. We take note of the fact that Soot marks function invocations via \textit{virtualinvoke} tags and use this as the entry and exit points for spawning the additional PDGs.
 
 \subsubsection{Key assumptions}
 
@@ -151,6 +150,41 @@ One of the key assumptions that were made for our implementation is that the Jav
 Another assumption is that the Java programs to be analyzed will only have Java primitives as their contents. There are significant bugs present in the Soot framework, one of them being that the PDG cannot be generated if there are library method calls in the body of the function, such as \textit{System.out.println()}, among others. We attributed this to a Soot limitation, and as such, chose to ignore it for our purposes.
 
 Lastly we also assume a forward non-branched analysis, i.e. the function cannot flow between one of several divergent paths that would be introduced by an \textit{if} statement, for example. Again, this introduces needless complications, and since this is a purely academic exercise, we chose to ignore this case. Soot however provides a \textit{forward branched flow analysis} of which should be investigated in the future as this would handle said limitation.
+
+\subsubsection{Code structure}
+
+The code is structured as shown in Figure~\ref{f:structure}. An explanation of the contents are described as follows:
+
+\begin{itemize}
+  \item The \textit{src} folder contains the project source code. One of its subfolders, the \textit{de.tud.sdg.analysis} folder contains most of the code used to generate the SDG and the analysis. The \textit{Main.java} class instantiates the SDG graph and analysis, the \textit{SDGForwardAnalysis.java} class provides the ability to associate the function nodes pertaining to the SDG with its associated flowset, and the \textit{SDGGraph.java} class generates the additional SDG nodes as necessary by subclassing the appropriate Soot class.
+  
+  \item The \textit{bin} folder contains the generated binaries. If the analysis will be done using the Soot Eclipse plugin, then this folder will not be populated.
+  
+  \item The \textit{lib} folder contains the Soot project dependencies. If the analysis will be done using the Soot Eclipse plugin, then this is not necessary.
+  
+  \item The \textit{reportables} folder contains the formal reports and papers relating to the project.
+  
+  \item The \textit{sootOutput} folder contains the generated intermediate Soot representations, such as the Jimple and Shimple form of a target Java class.
+  
+  \item The \textit{target} folder contains build related source files and the README file which contains instructions for running the analysis.
+\end{itemize}
+
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=.9\linewidth]{figures/Selection_093}
+	\caption[Project code structure.]{\label{f:structure}Project code structure.}
+\end{figure}
+
+\subsubsection{Running the analysis}
+
+To run the SDG analysis, the following steps must be taken:
+
+\begin{itemize}
+	\item Install JDK/JRE 1.7, Eclipse Kepler, and the Soot Eclipse Plugin. The plugin itself is not maintained by the library authors so an older version of Java and Eclipse is required.
+	
+	\item Right click on the test Java file \textit{TestHelloWorld.java}, then click Run Soot..., then Interactive Mode, then set Main as the main class, and \textit{pta-system-dependence-graphs} as the project name, then click ok. You may then use the Soot Eclipse Plugin toolbar to navigate through the analysis and display the generated flowsets.
+
+\end{itemize}
 
 \subsubsection{Base case: direct function call}
 
@@ -165,10 +199,6 @@ To handle the simplest case of a direct function call, we make use of Soot \text
 \subsubsection{Additional cases: recursion and lambda functions}
 
 Due to time constraints this aspect of the project was not able to be completed.
-
-\section{Evaluation and results}
-
-Note to pavlos: we need to evaluate it against the given test java programs! Then discuss results here!
 
 \section{Conclusion}
 

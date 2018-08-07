@@ -20,22 +20,24 @@ import soot.toolkits.graph.ExceptionalUnitGraph;
 public class SDGGraph extends ExceptionalUnitGraph {
 
 	public SDGGraph(Body body) {
+
+                // Superclass constructs the base graph.
 		super(body);
 		
-		PatchingChain<Unit> unitsChain = body.getUnits();
-		
-        for(Iterator unitIt = unitsChain.iterator(); unitIt.hasNext();){
-            Unit unit = (Unit) unitIt.next();
-            
-            for(Iterator boxIt = unit.getUseAndDefBoxes().iterator(); boxIt.hasNext();){
-                ValueBox box = (ValueBox) boxIt.next();
-                
-                // Method call as head and method dest as tail.
-                if(box.getValue() instanceof MethodOrMethodContext) {
-					super.addEdge(super.unitToSuccs, super.unitToPreds, unit, (Unit) unitIt.next());
-                }
-            }
-        }
+                // Now we modify the base graph to add the extra nodes comprising the SDG.
+		PatchingChain<Unit> unitsChain = body.getUnits();		
+		for(Iterator unitIt = unitsChain.iterator(); unitIt.hasNext();) {
+		    Unit unit = (Unit) unitIt.next();
+		    
+		    for(Iterator boxIt = unit.getUseAndDefBoxes().iterator(); boxIt.hasNext();) {
+		        ValueBox box = (ValueBox) boxIt.next();
+		        
+		        // Method call as head and method dest as tail.
+		        if(box.getValue() instanceof MethodOrMethodContext) {
+						super.addEdge(super.unitToSuccs, super.unitToPreds, unit, (Unit) unitIt.next());
+		        }
+		    }
+		}
 	}
 
 	@Override

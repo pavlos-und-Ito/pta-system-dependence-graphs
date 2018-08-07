@@ -32,10 +32,10 @@ public class Main {
 				new Transform("jtp.myTransform", new BodyTransformer() {
 
 					protected void internalTransform(Body body, String phase, Map options) {
+                                                // Override default ExceptionalGraph to create an SDG graph.
 						new SDGForwardAnalysis(new SDGGraph(body));
 
 						G.v().out.println(body.getMethod());
-						System.out.println(body.getMethod());
 					}
 					
 				}));
