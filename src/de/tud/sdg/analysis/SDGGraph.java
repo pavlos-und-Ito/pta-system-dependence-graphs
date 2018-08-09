@@ -34,7 +34,8 @@ public class SDGGraph extends ExceptionalUnitGraph {
 		        
 		        // Method call as head and method dest as tail.
 		        if(box.getValue() instanceof MethodOrMethodContext) {
-						super.addEdge(super.unitToSuccs, super.unitToPreds, unit, (Unit) unitIt.next());
+                	                MethodOrMethodContext methodInvoc = (MethodOrMethodContext) unit;
+					super.addEdge(super.unitToSuccs, super.unitToPreds, unit, (Unit) methodInvoc.context());
 		        }
 		    }
 		}
